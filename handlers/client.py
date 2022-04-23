@@ -4,7 +4,7 @@ from config import bot, dp, ADMIN
 
 # @dp.message_handler(commands=['mem'])
 from database import bot_db
-
+from parser import anime
 
 async def mem(message: types.Message):
     photo = open('photo_2022-04-09_15-00-02.jpg', 'rb')
@@ -73,6 +73,16 @@ async def ban(message: types.Message):
 async def show_random_user(message: types.Message):
     await bot_db.sql_command_random(message)
 
+
+async def parser_anime(message: types.Message):
+    data = anime.parser()
+    for item in data:
+        await bot.send_message(message.chat.id,
+                               f"{item['image']}\n{item['title']}\n\n{item['link']}")
+
+
+
+
 def register_hendlers_client(dp: Dispatcher):
     dp.register_message_handler(mem, commands=["mem"])
     dp.register_message_handler(hello, commands=["start"])
@@ -80,3 +90,4 @@ def register_hendlers_client(dp: Dispatcher):
     dp.register_message_handler(problem_1, commands=["problem"])
     dp.register_message_handler(ban, commands=["ban"], commands_prefix="!/")
     dp.register_message_handler(show_random_user, commands=["random"])
+    dp.register_message_handler(parser_anime, commands=["anime"])
