@@ -3,16 +3,48 @@ from aiogram import types, Dispatcher
 from config import bot, dp, ADMIN
 
 # @dp.message_handler(commands=['mem'])
-from database import bot_db
+from database import bot_db, psql_dp
 from parser import anime
 
 async def mem(message: types.Message):
     photo = open('photo_2022-04-09_15-00-02.jpg', 'rb')
     bot.send_photo(message.chat.id, photo=photo)
 
+
+
+
+
+
 # @dp.message_handler(commands=['start'])
 async def hello(message: types.Message):
-    await bot.send_message(message.chat.id, f"Салам хозяин {message.from_user.full_name}")
+    id = message.from_user.id
+    username = message.from_user.username
+    fullname = message.from_user.full_name
+
+    psql_dp.cursor.execute(f"SELECT id FROM users WHERE id = {id}")
+    result = psql_dp.cursor.fetchone()
+
+    if not result:
+        psql_dp.cursor.execute(f"INSERT INTO users (id, username, fullname) VALUES (%s, %s, %s)",
+                               (id, username, fullname))
+        psql_dp.db.commit()
+        await bot.send_message(message.chat.id, f"Добро пожаловать {message.from_user.full_name}!")
+    else:
+        await bot.send_message(message.chat.id, "Опять ты?!")
+
+async def get_users(message: types.Message):
+    all_users = psql_dp.cursor.execute("SELECT * FROM users")
+    result = psql_dp.cursor.fetchall()
+    for i in result:
+        await message.reply(
+            f"ID: {i[0]}\n"
+            f"USERNAME: {i[1]}\n"
+            f"FULLNAME: {i[2]}\n\n"
+        )
+    await message.answer(f"COUNT: {len(result)}")
+
+
+
 
 # @dp.message_handler(commands=['quiz'])
 async def quiz_1(message: types.Message):
