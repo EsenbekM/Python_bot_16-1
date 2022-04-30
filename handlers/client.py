@@ -118,6 +118,7 @@ async def parser_anime(message: types.Message):
 def register_hendlers_client(dp: Dispatcher):
     dp.register_message_handler(mem, commands=["mem"])
     dp.register_message_handler(hello, commands=["start"])
+    dp.register_message_handler(get_users, commands=['get'])
     dp.register_message_handler(quiz_1, commands=["quiz"])
     dp.register_message_handler(problem_1, commands=["problem"])
     dp.register_message_handler(ban, commands=["ban"], commands_prefix="!/")
