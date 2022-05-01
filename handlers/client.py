@@ -21,16 +21,11 @@ async def hello(message: types.Message):
     username = message.from_user.username
     fullname = message.from_user.full_name
 
-    psql_dp.cursor.execute(f"SELECT id FROM users WHERE id = (%s)", (id,))
-    result = psql_dp.cursor.fetchone()
-
-    if not result:
-        psql_dp.cursor.execute(f"INSERT INTO users (id, username, fullname) VALUES (%s, %s, %s)",
+    psql_dp.cursor.execute(f"INSERT INTO users (id, username, fullname) VALUES (%s, %s, %s)",
                                (id, username, fullname))
-        psql_dp.db.commit()
-        await bot.send_message(message.chat.id, f"Добро пожаловать {message.from_user.full_name}!")
-    else:
-        await bot.send_message(message.chat.id, "Опять ты?!")
+    psql_dp.db.commit()
+    await bot.send_message(message.chat.id, f"Добро пожаловать {message.from_user.full_name}!")
+
 
 async def get_users(message: types.Message):
     all_users = psql_dp.cursor.execute("SELECT * FROM users")
