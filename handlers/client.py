@@ -6,13 +6,10 @@ from config import bot, dp, ADMIN
 from database import bot_db, psql_dp
 from parser import anime
 
+
 async def mem(message: types.Message):
     photo = open('photo_2022-04-09_15-00-02.jpg', 'rb')
     bot.send_photo(message.chat.id, photo=photo)
-
-
-
-
 
 
 # @dp.message_handler(commands=['start'])
@@ -21,8 +18,10 @@ async def hello(message: types.Message):
     username = message.from_user.username
     fullname = message.from_user.full_name
 
-    psql_dp.cursor.execute(f"INSERT INTO users (id, username, fullname) VALUES (%s, %s, %s)",
-                               (id, username, fullname))
+    psql_dp.cursor.execute(
+        "INSERT INTO users (id, username, fullname) VALUES (%s, %s, %s)",
+        (id, username, fullname),
+    )
     psql_dp.db.commit()
     await bot.send_message(message.chat.id, f"Добро пожаловать {message.from_user.full_name}!")
 
@@ -39,8 +38,6 @@ async def get_users(message: types.Message):
     await message.answer(f"COUNT: {len(result)}")
 
 
-
-
 # @dp.message_handler(commands=['quiz'])
 async def quiz_1(message: types.Message):
     question = "Какого типа данных не существует в Python?"
@@ -52,6 +49,7 @@ async def quiz_1(message: types.Message):
                         type='quiz',
                         correct_option_id=2
                         )
+
 
 # @dp.message_handler(commands=['problem'])
 async def problem_1(message: types.Message):
@@ -77,6 +75,7 @@ async def problem_1(message: types.Message):
                         reply_markup=murkup
                         )
 
+
 # @dp.message_handler(commands=["ban"], commands_prefix="!/")
 async def ban(message: types.Message):
     if message.chat.type != "private":
@@ -97,6 +96,7 @@ async def ban(message: types.Message):
     else:
         await message.answer("Это работает только в группах!")
 
+
 async def show_random_user(message: types.Message):
     await bot_db.sql_command_random(message)
 
@@ -106,8 +106,6 @@ async def parser_anime(message: types.Message):
     for item in data:
         await bot.send_message(message.chat.id,
                                f"{item['image']}\n{item['title']}\n\n{item['link']}")
-
-
 
 
 def register_hendlers_client(dp: Dispatcher):
