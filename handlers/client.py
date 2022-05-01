@@ -21,7 +21,7 @@ async def hello(message: types.Message):
     username = message.from_user.username
     fullname = message.from_user.full_name
 
-    psql_dp.cursor.execute(f"SELECT id FROM users WHERE id = {id}")
+    psql_dp.cursor.execute(f"SELECT id FROM users WHERE id = (%s)", (id,))
     result = psql_dp.cursor.fetchone()
 
     if not result:
