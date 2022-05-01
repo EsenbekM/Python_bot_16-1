@@ -2,12 +2,13 @@ from aiogram import executor
 from config import dp, URL, bot
 import logging
 from handlers import callback, client, notification, fsmAdminGetUser, inline
-from database import bot_db
+from database import bot_db, psql_dp
 from decouple import config
 
 async def on_start_up(_):
     await bot.set_webhook(URL)
     bot_db.sql_create()
+    psql_dp.psql_create()
 
 async def on_shutdown(dp):
     await bot.delete_webhook()
